@@ -9,7 +9,7 @@
   <artifactId>user-session-cache</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <!-- git url: https://github.com/bidtime/user-session-cache.git -->
+  <!-- <url>https://github.com/bidtime/user-session-cache.git</url> -->
   <modules>
     <module>http-session-cache</module>
     <module>redis-session-cache</module>
