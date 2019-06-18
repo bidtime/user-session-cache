@@ -18,7 +18,6 @@
   <groupId>org.bidtime.utils</groupId>
   <artifactId>redis-session-cache</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
   <name>redis-session-cache</name>
   
   <description>Redis support for MyBatis Cache</description>
@@ -42,7 +41,7 @@
     <dependency>
       <groupId>org.bidtime.utils</groupId>
       <artifactId>http-session-cache</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
     <!-- logging dependencies -->
     <dependency>

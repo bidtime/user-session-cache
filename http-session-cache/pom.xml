@@ -10,7 +10,6 @@
   </parent>
   <artifactId>http-session-cache</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
   <name>http-session-cache</name>
 	
   <properties>
