@@ -31,17 +31,17 @@ import org.slf4j.LoggerFactory;
  * @author riverbo
  * @since 2018.04.17
  */
-public final class HashMapCache implements IUserCache {
+public final class UserMapCache implements IUserCache {
 
-  private static final Logger log = LoggerFactory.getLogger(HashMapCache.class);
+  private static final Logger log = LoggerFactory.getLogger(UserMapCache.class);
   
   private final Map<Object, Object> map = new ConcurrentHashMap<Object, Object>();
   
-  public static final HashMapCache single = new HashMapCache();
+  public static final UserMapCache single = new UserMapCache();
 
   private Integer timeout;                    // seconds，保留, 暂时不用
 
-  public HashMapCache() {
+  public UserMapCache() {
   }
 
   @SuppressWarnings("unchecked")

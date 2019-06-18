@@ -8,7 +8,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.bidtime.session.bean.ISessionUser;
-import org.bidtime.session.cache.HashMapCache;
+import org.bidtime.session.cache.UserMapCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,9 +63,9 @@ public class UserOnLineListener implements HttpSessionListener {
 	 protected static void sessionRemove(HttpSession session) {
     if (session != null) {
       try {
-        ISessionUser u = HashMapCache.single.del(session.getId());
+        ISessionUser u = UserMapCache.single.del(session.getId());
         if (u != null) {
-          HashMapCache.single.del(u.getId());
+          UserMapCache.single.del(u.getId());
         }
       } catch (Exception e) {
         log.error("session_destroy: {}", e.getMessage());

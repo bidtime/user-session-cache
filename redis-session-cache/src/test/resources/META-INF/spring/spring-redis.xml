@@ -46,7 +46,8 @@
     <property name="serializer" value="kryo"/>
   </bean>
 
-  <bean id="hashMapCache" class="org.bidtime.session.cache.HashMapCache">
+  <bean id="userMapCache" class="org.bidtime.session.cache.UserMapCache">
+    <property name="timeout" value="36000"/>
   </bean>
 
   <!--
