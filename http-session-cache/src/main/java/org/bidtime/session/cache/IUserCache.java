@@ -41,11 +41,13 @@ public interface IUserCache {
 
   // String getId();
 
-  <T> T set(final Object k, T v);
+  <T> T set(final Object k, T v) throws RuntimeException;
 
-  <T> T get(final Object k);
+  <T> T get(final Object k) throws RuntimeException;
 
-  <T> T del(final Object k);
+  <T> T get(final Object k, boolean del) throws RuntimeException;
+
+  <T> T del(final Object k) throws RuntimeException;
 
 //  void clear();
 //

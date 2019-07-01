@@ -51,16 +51,24 @@ public final class UserMapCache implements IUserCache {
     return t;
   }
 
-  @SuppressWarnings("unchecked")
   public <T> T get(final Object k) {
+    return get(k, false);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T> T get(final Object k, boolean del) {
     T t = (T)this.map.get(k);
     log.debug("get: {}, {}, tm({})", k, t, timeout);
+    if (del) {
+      T l = (T)this.map.remove(k);
+      log.debug("del: {}, {}, tm({})", k, l, timeout);
+    }
     return t;
   }
 
   @SuppressWarnings("unchecked")
   public <T> T del(final Object k) {
-    T t = (T)this.map.get(k);
+    T t = (T)this.map.remove(k);
     log.debug("del: {}, {}, tm({})", k, t, timeout);
     return t;
   }

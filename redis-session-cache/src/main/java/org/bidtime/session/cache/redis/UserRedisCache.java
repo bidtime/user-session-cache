@@ -170,7 +170,8 @@ public final class UserRedisCache implements IUserCache {
     return (l != null) ? true : false;
   }
 
-  public <T> T set(final Object k, T v) {
+  @Override
+  public <T> T set(final Object k, T v) throws RuntimeException {
     return execute(new RedisCallback<T>() {
 
       @SuppressWarnings("rawtypes")
@@ -202,8 +203,14 @@ public final class UserRedisCache implements IUserCache {
     });
   }
 
+  @Override
+  public <T> T get(final Object k) throws RuntimeException {
+    return get(k, false);
+  }
+  
+  @Override
   @SuppressWarnings("unchecked")
-  public <T> T get(final Object k) {
+  public <T> T get(final Object k, boolean del) throws RuntimeException {
     return execute(new RedisCallback<T>() {
 
       @SuppressWarnings("rawtypes")
@@ -226,15 +233,19 @@ public final class UserRedisCache implements IUserCache {
             log.debug("hGet: {}-{}, {}: is null", id, k, (t == null) ? null : t.getClass().getSimpleName());
           }
         }
-//        if (remove) {
-//          conn.hDel(idBytes, keyBytes);
-//        }
+        if (del) {
+          Long l = conn.hDel(idBytes, keyBytes);
+          if (log.isDebugEnabled()) {
+            log.debug("hDel: {}-{}, {}", id, k, (l == null) ? null : l);
+          }        
+        }
         return t;
       }
     });
   }
 
-  public <T> T del(final Object k) {
+  @Override
+  public <T> T del(final Object k) throws RuntimeException {
     execute(new RedisCallback<Long>() {
       @Override
       public Long doInRedis(RedisConnection conn) {

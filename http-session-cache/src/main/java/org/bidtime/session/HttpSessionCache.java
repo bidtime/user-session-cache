@@ -1,7 +1,5 @@
 package org.bidtime.session;
 
-import javax.servlet.http.HttpSession;
-
 import org.bidtime.session.bean.ISessionUser;
 import org.bidtime.session.cache.IUserCache;
 import org.bidtime.session.state.SessionLoginState;
@@ -23,57 +21,47 @@ public class HttpSessionCache {
   }
 
   // session_destroy
-	protected void session_destroy(HttpSession session) {
-    if (session != null) {
-      try {
-        ISessionUser u = this.cache.del(session.getId());
-        if (u != null) {
-          this.cache.del(u.getId());
-        }
-      } catch (Exception e) {
-        log.error("session_destroy: {}", e.getMessage());
+	protected void session_destroy(String sessionId) throws RuntimeException {
+    try {
+      ISessionUser u = this.cache.del(sessionId);
+      if (u != null) {
+        this.cache.del(u.getId());
       }
+    } catch (Exception e) {
+      log.error("session_destroy: {}", e.getMessage());
     }
 	}
 
 	// user2DoubleOnLine
-	protected boolean user2DoubleOnLine(HttpSession session, ISessionUser u) {
-		if (session != null) {
-		  this.cache.set(session.getId(), u);
-		  String v = this.cache.set(u.getId(), session.getId());
-		  if (v != null && !v.equals(session.getId())) {
-		    return true;
-		  } else {
-		    return false;
-		  }
-		} else {
-			return false;
-		}
+	protected boolean user2DoubleOnLine(String sessionId, ISessionUser u) throws RuntimeException {
+	  this.cache.set(sessionId, u);
+	  String v = this.cache.set(u.getId(), sessionId);
+	  if (v != null && !v.equals(sessionId)) {
+	    return true;
+	  } else {
+	    return false;
+	  }
 	}
 	
 	// getSessionLoginState
-	protected SessionLoginState getSessionLoginState(HttpSession session) {
-		if (session != null) {
-		  StateEnum e = StateEnum.NOT_LOGIN;	//未登陆
-			ISessionUser u = getUser(session);
-			if (u != null) {
-			  String userId = u.getId();
-			  String sessionId = this.cache.get(userId);
-			  if (sessionId != null && !session.getId().equals(sessionId)) {
-					e = StateEnum.ANOTHER_LOGIN;	//登陆后被踢
-				} else {
-					e = StateEnum.LOGGED_IN;	//正常登陆
-				}
+	protected SessionLoginState getSessionLoginState(String sessionId) throws RuntimeException {
+	  StateEnum e = StateEnum.NOT_LOGIN;	//未登陆
+		ISessionUser u = getUser(sessionId);
+		if (u != null) {
+		  String userId = u.getId();
+		  String sessionIdV = this.cache.get(userId);
+		  if (sessionIdV != null && !sessionIdV.equals(sessionId)) {
+				e = StateEnum.ANOTHER_LOGIN;	//登陆后被踢
+			} else {
+				e = StateEnum.LOGGED_IN;	//正常登陆
 			}
-			return new SessionLoginState(u, e);
-		} else {
-			return null;
 		}
+		return new SessionLoginState(u, e);
 	}
 	
 	// getUser
-	protected ISessionUser getUser(HttpSession session) {
-		Object obj = this.cache.get(session.getId());
+	protected ISessionUser getUser(String sessionId) throws RuntimeException {
+		Object obj = this.cache.get(sessionId);
 		if (obj != null) {
 			return (ISessionUser)obj;
 		} else {
@@ -82,8 +70,8 @@ public class HttpSessionCache {
 	}
 	
 	// getUserId
-	protected String getUserIdString(HttpSession session, String defValue) {
-		ISessionUser u = getUser(session);
+	protected String getUserIdString(String sessionId, String defValue) throws RuntimeException {
+		ISessionUser u = getUser(sessionId);
 		if (u != null) {
 			return u.getId();
 		} else {
@@ -92,13 +80,13 @@ public class HttpSessionCache {
 	}
 
 	// getUserId
-	protected String getUserIdString(HttpSession session) {
-		return getUserIdString(session, null);
+	protected String getUserIdString(String sessionId) throws RuntimeException {
+		return getUserIdString(sessionId, null);
 	}
 
 	// getUserName
-	public String getUserName(HttpSession session, String defValue) {
-		ISessionUser u = getUser(session);
+	public String getUserName(String sessionId, String defValue) throws RuntimeException {
+		ISessionUser u = getUser(sessionId);
 		if (u != null) {
 			return u.getName();
 		} else {
@@ -107,40 +95,23 @@ public class HttpSessionCache {
 	}
 	
   // get
-  protected <T> T get(HttpSession session, String ext) {
-    return get(session, ext, false);
+  protected <T> T get(String sessionId, String ext) throws RuntimeException {
+    return cache.get(sessionId + ext, false);
   }
   
   // get
-  @SuppressWarnings("unchecked")
-  protected <T> T get(HttpSession session, String ext, boolean delete) {
-    if (session != null) {
-      Object o = cache.get(session.getId() + ext);
-      if (delete) {
-        cache.del(session.getId() + ext);
-      }
-      return (T)o;
-    } else {
-      return null;
-    }
+  protected <T> T get(String sessionId, String ext, boolean delete) throws RuntimeException {
+    return cache.get(sessionId + ext, delete);
   }
   
   // del
-  protected <T> T del(HttpSession session, String ext) {
-    if (session != null) {
-      return cache.del(session.getId() + ext);
-    } else {
-      return null;
-    }
+  protected <T> T del(String sessionId, String ext) throws RuntimeException {
+    return cache.del(sessionId + ext);
   }
   
   // set
-  protected <T> T set(HttpSession session, String ext, T value) {
-    if (session != null) {
-      return cache.set(session.getId() + ext, value);
-    } else {
-      return null;
-    }
+  protected <T> T set(String sessionId, String ext, T value) throws RuntimeException {
+    return cache.set(sessionId + ext, value);
   }
 
   public IUserCache getCache() {
