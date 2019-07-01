@@ -25,6 +25,7 @@
 
   <properties>
     <!--
+    <http-session-cache.version>0.0.1-SNAPSHOT</http-session-cache.version>
     <junit.version>4.12</junit.version>
     <servlet-api.version>3.1.0</servlet-api.version>
     <slf4j-api.version>1.7.25</slf4j-api.version>

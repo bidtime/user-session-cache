@@ -22,7 +22,9 @@ public class HttpUserRequest {
 
   private HttpSessionCache userSession;
 
-  private String cookieId = "ACCESS_TICKET";
+  private String cookieId;  // = "ACCESS_TICKET";
+
+  private boolean cookied;
 
   public HttpUserRequest() {
     this.userSession = new HttpSessionCache();
@@ -31,6 +33,7 @@ public class HttpUserRequest {
   // get cookie
   private String getCookieV(HttpServletRequest req) throws RuntimeException {
     String sessionId = null;
+    boolean bKey = false;
     //1 通过Request对象获取上次服务器端发送的Cookie信息
     Cookie[] cookies = req.getCookies();
     //2 判断Request对象中的Cookie是否存在
@@ -40,14 +43,18 @@ public class HttpUserRequest {
         //4 获取每一个Cookie的名称
         String name = cookie.getName();
         //5 判断Cookie的名称是否存在是id
-        if (name.equals(cookieId)) {
+        if ( name.equals(cookieId) ) {
+          bKey = true;
           sessionId = cookie.getValue();
           break;
         }
       }
     }
+    if ( !bKey ) {
+      throw new CookieNullException("cookie key " + cookieId + " is null");
+    }
     if (sessionId == null || sessionId.isEmpty()) {
-      throw new CookieNullException("cookieId is not null");
+      throw new CookieNullException("cookie value is null");
     }
     return sessionId;
   }
@@ -57,15 +64,21 @@ public class HttpUserRequest {
   }
   
   private String getSessionId(HttpServletRequest req, boolean newSession) throws RuntimeException {
-    HttpSession session = req.getSession(newSession);
     String sessionId = null;
-    if (session == null) {
+    if (cookied) {
       sessionId = getCookieV(req);
+      if (sessionId == null || sessionId.isEmpty()) {
+        throw new CookieNullException("cookieId is null, cookied is disabled");
+      }
     } else {
+      HttpSession session = req.getSession(newSession);
+      if (session == null) {
+        throw new RuntimeException("http session is null");
+      }
       sessionId = session.getId();
-    }
-    if (sessionId == null || sessionId.isEmpty()) {
-      throw new RuntimeException("sessionId is not null");
+      if (sessionId == null || sessionId.isEmpty()) {
+        throw new RuntimeException("sessionId is null");
+      }
     }
     return sessionId;
   }
@@ -88,18 +101,24 @@ public class HttpUserRequest {
   // login
   private boolean login(HttpServletRequest req, HttpServletResponse res, ISessionUser u,
       boolean newSession) throws RuntimeException {
-    HttpSession session = req.getSession(newSession);
     String sessionId = null;
-    if (session != null) {
-      sessionId = session.getId();
-    }
-    if (sessionId == null || sessionId.isEmpty()) {
+    if (cookied) {
       //1 利用UUID生成一个随机字符串
-      sessionId = UUID.randomUUID().toString();
+      sessionId = UUID.randomUUID().toString();//.replace("-", "");
       //2 创建Cookies实例对象
       Cookie cookie = new Cookie(cookieId, sessionId);
       //3 将Cookies实例对象,添加到Response对象中
       res.addCookie(cookie);
+    } else {
+      HttpSession session = req.getSession(newSession);
+      if (session == null) {
+        throw new RuntimeException("session is null");
+      } else {
+        sessionId = session.getId();
+      }
+      if (sessionId == null || sessionId.isEmpty()) {
+        throw new RuntimeException("sessionId is null");
+      }
     }
     return userSession.user2DoubleOnLine(sessionId, u);
   }
@@ -179,6 +198,15 @@ public class HttpUserRequest {
 
   public void setCookieId(String cookieId) {
     this.cookieId = cookieId;
+    //setCookied(cookieId == null || cookieId.isEmpty());
+  }
+ 
+  public void setCookied(boolean cookied) {
+    this.cookied = cookied;
+  }
+  
+  public boolean getCookied() {
+    return cookied;
   }
 
 }
