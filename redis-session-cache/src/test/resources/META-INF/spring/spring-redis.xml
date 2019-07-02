@@ -45,7 +45,7 @@
     <property name="cluster" value="false"/>
     <property name="serializer" value="kryo"/>
   </bean>
-
+  
   <!--
   <bean id="userMapCache" class="org.bidtime.session.cache.UserMapCache">
     <property name="timeout" value="36000"/>
@@ -59,8 +59,7 @@
   
   <bean id="httpUserRequest" class="org.bidtime.session.HttpUserRequest">
     <property name="cache" ref="userRedisCache"/>
-    <property name="cookieId" value="ACCESS_TICKET"/>
-    <property name="cookied" value="1"/>
+    <!-- <property name="cookieId" value="ACCESS_TICKET"/> -->
   </bean>
 
 </beans>

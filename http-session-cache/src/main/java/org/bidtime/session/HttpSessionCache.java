@@ -16,10 +16,6 @@ public class HttpSessionCache {
   public HttpSessionCache() {
   }
 
-  public HttpSessionCache(IUserCache cache) {
-    this.cache = cache;
-  }
-
   // session_destroy
 	protected void session_destroy(String sessionId) throws RuntimeException {
     try {
@@ -70,7 +66,7 @@ public class HttpSessionCache {
 	}
 	
 	// getUserId
-	protected String getUserIdString(String sessionId, String defValue) throws RuntimeException {
+	protected String getUserId(String sessionId, String defValue) throws RuntimeException {
 		ISessionUser u = getUser(sessionId);
 		if (u != null) {
 			return u.getId();
@@ -80,10 +76,15 @@ public class HttpSessionCache {
 	}
 
 	// getUserId
-	protected String getUserIdString(String sessionId) throws RuntimeException {
-		return getUserIdString(sessionId, null);
+	protected String getUserId(String sessionId) throws RuntimeException {
+		return getUserId(sessionId, null);
 	}
 
+  // getUserName
+  public String getUserName(String sessionId) throws RuntimeException {
+    return this.getUserName(sessionId, null);
+  }
+  
 	// getUserName
 	public String getUserName(String sessionId, String defValue) throws RuntimeException {
 		ISessionUser u = getUser(sessionId);
