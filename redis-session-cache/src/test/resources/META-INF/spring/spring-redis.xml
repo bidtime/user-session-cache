@@ -46,19 +46,21 @@
     <property name="serializer" value="kryo"/>
   </bean>
 
+  <!--
   <bean id="userMapCache" class="org.bidtime.session.cache.UserMapCache">
     <property name="timeout" value="36000"/>
   </bean>
+  -->
 
-  <!--
   <bean id="userRedisCache" class="org.bidtime.session.cache.redis.UserRedisCache">
     <property name="id" value="user-session"/>
     <property name="timeout" value="36000"/>
   </bean>
-  -->
   
   <bean id="httpUserRequest" class="org.bidtime.session.HttpUserRequest">
     <property name="cache" ref="userRedisCache"/>
+    <property name="cookieId" value="ACCESS_TICKET"/>
+    <property name="cookied" value="1"/>
   </bean>
 
 </beans>
