@@ -61,7 +61,7 @@ public class HttpUserRequest {
   }
   
   // getSessionId
-  private String getSessionId(HttpServletRequest req) throws RuntimeException {
+  public String getSessionId(HttpServletRequest req) throws RuntimeException {
     return getCookieV(req, this.cookieId);
   }
 
@@ -121,7 +121,7 @@ public class HttpUserRequest {
   public String getUserName(HttpServletRequest req) throws RuntimeException {
     return this.userSession.getUserName(getSessionId(req));
   }
-  
+
   // getUserName
   public String getUserName(HttpServletRequest req, String defValue) throws RuntimeException {
     return this.userSession.getUserName(getSessionId(req), defValue);
